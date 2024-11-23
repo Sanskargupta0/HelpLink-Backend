@@ -10,8 +10,8 @@ supertokens.init({
     framework: "express",
     supertokens: {
         // https://try.supertokens.com is for demo purposes. Replace this with the address of your core instance (sign up on supertokens.com), or self host a core.
-        connectionURI: "https://try.supertokens.com",
-        // apiKey: <API_KEY(if configured)>,
+        connectionURI: "https://st-dev-6fed59b0-a9b7-11ef-b66d-edb7437125eb.aws.supertokens.io",
+        apiKey: "IF4oADYrhzUlDE2w-kOudNBiSq",
     },
     appInfo: {
         appName: "Delhivery",

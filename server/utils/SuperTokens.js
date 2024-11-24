@@ -3,31 +3,29 @@ const Session = require("supertokens-node/recipe/session");
 const EmailPassword = require("supertokens-node/recipe/emailpassword");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdParty = require("supertokens-node/recipe/thirdparty");
-
+const dotenv = require('dotenv');
+dotenv.config();
 
 
 supertokens.init({
     framework: "express",
     supertokens: {
-        // https://try.supertokens.com is for demo purposes. Replace this with the address of your core instance (sign up on supertokens.com), or self host a core.
-        connectionURI: "https://st-dev-6fed59b0-a9b7-11ef-b66d-edb7437125eb.aws.supertokens.io",
-        apiKey: "IF4oADYrhzUlDE2w-kOudNBiSq",
+        connectionURI: process.env.SUPERTOKENS_CONNECTION_URL,
+        apiKey: process.env.SUPERTOKENS_API_KEY,
     },
     appInfo: {
-        appName: "Delhivery",
-        apiDomain: "http://localhost:8080",
-        websiteDomain: "http://localhost:5173",
+        appName: process.env.APP_NAME,
+        apiDomain: process.env.BACKEND_URL,
+        websiteDomain: process.env.FRONTEND_URL,
         apiBasePath: "/auth",
         websiteBasePath: "/auth"
     },
     recipeList: [
         EmailPassword.init(),
         EmailVerification.init({
-            mode: "REQUIRED", // or "OPTIONAL"
+            mode: "REQUIRED",
           }),
         ThirdParty.init({
-            // We have provided you with development keys which you can use for testing.
-            // IMPORTANT: Please replace them with your own OAuth keys for production use.
             signInAndUpFeature: {
                 providers: [{
                     config: {

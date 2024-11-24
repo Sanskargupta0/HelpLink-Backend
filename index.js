@@ -3,11 +3,12 @@ const cors = require('cors');
 const { errorHandler } = require('supertokens-node/framework/express');
 const { middleware } = require('supertokens-node/framework/express');
 const supertokens = require('./server/utils/SuperTokens')
-
+const dotenv = require('dotenv');
+dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     allowedHeaders: ['Content-Type', ...supertokens.getAllCORSHeaders()],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
@@ -25,7 +26,8 @@ app.use(errorHandler());
 app.use((err, req, res, next) => {
    res.status(500).send("Internal server error"+err.message);
 });
-
-app.listen(8080, () => {
-    console.log('Server is running on port 8080');
+    
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });

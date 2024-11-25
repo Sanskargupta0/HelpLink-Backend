@@ -4,6 +4,7 @@ const EmailPassword = require("supertokens-node/recipe/emailpassword");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdParty = require("supertokens-node/recipe/thirdparty");
 const dashboard = require("supertokens-node/recipe/dashboard");
+const UserMetadata = require("supertokens-node/recipe/usermetadata");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -22,6 +23,26 @@ supertokens.init({
   },
   recipeList: [
     EmailPassword.init({
+      signUpFeature: {
+        formFields: [
+          {
+            id: "name",
+          },
+          {
+            id: "phone",
+            validate: async (value) => {
+              if (value.length < 10) {
+                return "Phone number must be at least 10 digit";
+              }
+              return undefined;
+            },
+          },
+          {
+            id: "country",
+            optional: true,
+          },
+        ],
+      },
       override: {
         functions: (originalImplementation) => {
           return {
@@ -40,6 +61,35 @@ supertokens.init({
               return {
                 status: "EMAIL_ALREADY_EXISTS_ERROR",
               };
+            },
+          };
+        },
+        apis: (originalImplementation) => {
+          return {
+            ...originalImplementation,
+            signUpPOST: async function (input) {
+              if (originalImplementation.signUpPOST === undefined) {
+                throw Error("Should never come here");
+              }
+
+              // First we call the original implementation of signUpPOST.
+              let response = await originalImplementation.signUpPOST(input);
+
+              // Post sign up response, we check if it was successful
+              if (response.status === "OK") {
+                // These are the input form fields values that the user used while signing up
+                let formFields = input.formFields;
+                let name = formFields.find((f) => f.id === "name").value;
+                let FirstName = name.split(" ")[0];
+                let LastName = name.split(" ")[1];
+                await UserMetadata.updateUserMetadata(response.user.id, {
+                  first_name: FirstName,
+                  last_name: LastName,
+                  phone: formFields.find((f) => f.id === "phone").value,
+                  country: formFields.find((f) => f.id === "country").value,
+                });
+              }
+              return response;
             },
           };
         },
@@ -77,8 +127,23 @@ supertokens.init({
                 }
               );
               if (existingUsers.length === 0) {
-                // this means this email is new so we allow sign up
-                return originalImplementation.signInUp(input);
+                let response = await originalImplementation.signInUp(input);
+
+                if (response.status === "OK") {
+                  let name =
+                    response.rawUserInfoFromProvider.fromUserInfoAPI.name;
+                  let picture =
+                    response.rawUserInfoFromProvider.fromUserInfoAPI.picture;
+                  let first_name = name.split(" ")[0];
+                  let last_name = name.split(" ")[1];
+                  await UserMetadata.updateUserMetadata(response.user.id, {
+                    first_name,
+                    last_name,
+                    picture,
+                  });
+                }
+
+                return response;
               }
               if (
                 existingUsers.find(
@@ -125,6 +190,7 @@ supertokens.init({
     }),
     Session.init(),
     dashboard.init(),
+    UserMetadata.init(),
   ],
 });
 

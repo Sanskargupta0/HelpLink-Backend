@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { errorHandler } = require('supertokens-node/framework/express');
 const { middleware } = require('supertokens-node/framework/express');
-const supertokens = require('./server/utils/SuperTokens')
+const supertokens = require('./server/Utils/SuperTokens')
+const connectDB = require("./server/Utils/db");
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
@@ -28,6 +29,8 @@ app.use((err, req, res, next) => {
 });
     
 const port = process.env.PORT || 3001;
+connectDB().then(() => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
+});
 });

@@ -5,6 +5,7 @@ const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdParty = require("supertokens-node/recipe/thirdparty");
 const dashboard = require("supertokens-node/recipe/dashboard");
 const UserMetadata = require("supertokens-node/recipe/usermetadata");
+const UserRoles = require("supertokens-node/recipe/userroles");
 const Wallet = require("../Models/Wallet_model");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -89,6 +90,7 @@ supertokens.init({
                   phone: formFields.find((f) => f.id === "phone").value,
                   country: formFields.find((f) => f.id === "country").value,
                 });
+                await UserRoles.addRoleToUser("public", response.user.id, "Active");
                 const wallet = new Wallet({
                   User_ID: response.user.id,
                 });
@@ -146,6 +148,7 @@ supertokens.init({
                     last_name,
                     picture,
                   });
+                  await UserRoles.addRoleToUser("public", response.user.id, "Active");
                   const wallet = new Wallet({
                     User_ID: response.user.id,
                   });
@@ -200,6 +203,7 @@ supertokens.init({
     Session.init(),
     dashboard.init(),
     UserMetadata.init(),
+    UserRoles.init(),
   ],
 });
 

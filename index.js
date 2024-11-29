@@ -3,6 +3,8 @@ const cors = require('cors');
 const { errorHandler } = require('supertokens-node/framework/express');
 const { middleware } = require('supertokens-node/framework/express');
 const supertokens = require('./server/Utils/SuperTokens')
+const { verifySession } = require ("supertokens-node/recipe/session/framework/express");
+const userRouter = require("./server/Routers/userData-routes");
 const connectDB = require("./server/Utils/db");
 const dotenv = require('dotenv');
 dotenv.config();
@@ -21,6 +23,12 @@ app.use(middleware());
 app.get('/', (req, res) => {
     res.status(200).send('Health check passed');
 });
+app.use(verifySession());
+
+
+app.use("/", userRouter);
+
+
 
 app.use(errorHandler());
 

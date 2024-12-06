@@ -6,6 +6,7 @@ const ThirdParty = require("supertokens-node/recipe/thirdparty");
 const dashboard = require("supertokens-node/recipe/dashboard");
 const UserMetadata = require("supertokens-node/recipe/usermetadata");
 const UserRoles = require("supertokens-node/recipe/userroles");
+const User = require("../Models/User_model");
 const Wallet = require("../Models/Wallet_model");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -90,11 +91,26 @@ supertokens.init({
                   phone: formFields.find((f) => f.id === "phone").value,
                   country: formFields.find((f) => f.id === "country").value,
                 });
-                await UserRoles.addRoleToUser("public", response.user.id, "Active");
-                const wallet = new Wallet({
-                  User_ID: response.user.id,
+                await UserRoles.addRoleToUser(
+                  "public",
+                  response.user.id,
+                  "Active"
+                );
+                const user = new User({
+                  super_token_Id: response.user.id,
+                  first_name: FirstName,
+                  last_name: LastName,
+                  email: formFields.find((f) => f.id === "email").value,
+                  phone: formFields.find((f) => f.id === "phone").value,
+                  country: formFields.find((f) => f.id === "country").value,
                 });
-                await wallet.save();
+                await user.save();
+                const wallet = new Wallet({
+                  User_ID: user._id,
+                });
+                const Wallet_ID = await wallet.save();
+                user.wallet = Wallet_ID._id;
+                await user.save();
               }
               return response;
             },
@@ -148,11 +164,26 @@ supertokens.init({
                     last_name,
                     picture,
                   });
-                  await UserRoles.addRoleToUser("public", response.user.id, "Active");
-                  const wallet = new Wallet({
-                    User_ID: response.user.id,
+                  await UserRoles.addRoleToUser(
+                    "public",
+                    response.user.id,
+                    "Active"
+                  );
+                  const user = new User({
+                    super_token_Id: response.user.id,
+                    first_name,
+                    last_name,
+                    email:
+                      response.rawUserInfoFromProvider.fromUserInfoAPI.email,
+                    picture,
                   });
-                  await wallet.save();
+                  const savedUser = await user.save();
+                  const wallet = new Wallet({
+                    User_ID: savedUser._id,
+                  });
+                  const Wallet_ID = await wallet.save();
+                  savedUser.wallet = Wallet_ID._id;
+                  await savedUser.save();
                 }
 
                 return response;

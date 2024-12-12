@@ -6,7 +6,7 @@ const UserMetadata = require("supertokens-node/recipe/usermetadata");
 const userData = async (req, res) => {
   let super_token_Id = req.session.getUserId();
   let user = await User.findOne({ super_token_Id: super_token_Id }).populate(
-    "wallet"
+    "wallet", { Balance: 1 , _id: 1 }
   );
   let userInfo = await supertokens.getUser(super_token_Id);
   let thirdparty = userInfo.thirdParty.length > 0 ? true : false;

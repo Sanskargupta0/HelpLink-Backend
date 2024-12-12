@@ -83,8 +83,13 @@ supertokens.init({
                 // These are the input form fields values that the user used while signing up
                 let formFields = input.formFields;
                 let name = formFields.find((f) => f.id === "name").value;
-                let FirstName = name.split(" ")[0];
-                let LastName = name.split(" ")[1];
+                if (name.split(" ").length > 1) {
+                  var FirstName = name.split(" ")[0];
+                  var LastName = name.split(" ")[1];
+                } else {
+                  var FirstName = name;
+                  var LastName = "";
+                }
                 await UserMetadata.updateUserMetadata(response.user.id, {
                   first_name: FirstName,
                   last_name: LastName,
@@ -154,11 +159,30 @@ supertokens.init({
 
                 if (response.status === "OK") {
                   let name =
-                    response.rawUserInfoFromProvider.fromUserInfoAPI.name;
+                    response.rawUserInfoFromProvider.fromUserInfoAPI.name ||
+                    null; // Check if name exists
                   let picture =
-                    response.rawUserInfoFromProvider.fromUserInfoAPI.picture;
-                  let first_name = name.split(" ")[0];
-                  let last_name = name.split(" ")[1];
+                    response.rawUserInfoFromProvider.fromUserInfoAPI.picture ||
+                    ""; // Default to empty string
+                  let email =
+                    response.rawUserInfoFromProvider.fromUserInfoAPI.email ||
+                    "Unknown";
+
+                  let first_name = "";
+                  let last_name = "";
+
+                  if (name) {
+                    // Split name into first and last name
+                    const nameParts = name.split(" ");
+                    first_name = nameParts[0];
+                    last_name =
+                      nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+                  } else {
+                    // Fallback to deriving the name from the email
+                    const emailParts = email.split("@");
+                    first_name = emailParts[0]; // Use the part before '@' as first name
+                    last_name = ""; // Leave last name blank
+                  }
                   await UserMetadata.updateUserMetadata(response.user.id, {
                     first_name,
                     last_name,

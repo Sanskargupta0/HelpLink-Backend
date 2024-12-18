@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Wallet",
   },
+  notifications: {
+    type: Array,
+    default: [],
+  },
 });
 
 const User = mongoose.model("User", UserSchema);

@@ -5,9 +5,7 @@ const UserMetadata = require("supertokens-node/recipe/usermetadata");
 
 const userData = async (req, res) => {
   let super_token_Id = req.session.getUserId();
-  let user = await User.findOne({ super_token_Id: super_token_Id }).populate(
-    "wallet", { Balance: 1 , _id: 1 }
-  );
+  let user = await User.findOne({ super_token_Id: super_token_Id })
   let userInfo = await supertokens.getUser(super_token_Id);
   let thirdparty = userInfo.thirdParty.length > 0 ? true : false;
   if (user) {
@@ -22,9 +20,7 @@ const userData = async (req, res) => {
 ``;
 const updateUserData = async (req, res) => {
   let super_token_Id = req.session.getUserId();
-  let user = await User.findOne({ super_token_Id: super_token_Id }).populate(
-    "wallet"
-  );
+  let user = await User.findOne({ super_token_Id: super_token_Id })
   if (user) {
     await User.findByIdAndUpdate(user._id, req.body);
     await UserMetadata.updateUserMetadata(super_token_Id, req.body);

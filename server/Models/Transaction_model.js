@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const TransactionSchema = new mongoose.Schema({
-  Wallet_ID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Wallet",
-    required: true,
-  },
   Transaction_Type: {
     type: String,
     required: true,

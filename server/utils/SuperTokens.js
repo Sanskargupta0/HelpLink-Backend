@@ -7,7 +7,6 @@ const dashboard = require("supertokens-node/recipe/dashboard");
 const UserMetadata = require("supertokens-node/recipe/usermetadata");
 const UserRoles = require("supertokens-node/recipe/userroles");
 const User = require("../Models/User_model");
-const Wallet = require("../Models/Wallet_model");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -110,12 +109,6 @@ supertokens.init({
                   country: formFields.find((f) => f.id === "country").value,
                 });
                 await user.save();
-                const wallet = new Wallet({
-                  User_ID: user._id,
-                });
-                const Wallet_ID = await wallet.save();
-                user.wallet = Wallet_ID._id;
-                await user.save();
               }
               return response;
             },
@@ -201,13 +194,7 @@ supertokens.init({
                       response.rawUserInfoFromProvider.fromUserInfoAPI.email,
                     picture,
                   });
-                  const savedUser = await user.save();
-                  const wallet = new Wallet({
-                    User_ID: savedUser._id,
-                  });
-                  const Wallet_ID = await wallet.save();
-                  savedUser.wallet = Wallet_ID._id;
-                  await savedUser.save();
+                  await user.save();
                 }
 
                 return response;

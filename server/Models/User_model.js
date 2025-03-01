@@ -29,10 +29,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "Active",
   },
-  wallet: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Wallet",
-  },
   notifications: {
     type: Array,
     default: [],

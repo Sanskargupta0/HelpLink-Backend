@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-
-let Gobal_Notification = new Schema({
+let Gobal_Notification = new mongoose.Schema({
   title: {
     type: String,
   },
@@ -23,6 +21,6 @@ let Gobal_Notification = new Schema({
   },
 });
 
-const Gobal_NotificationModel =  new mongoose.model("Gobal_Notification", Gobal_Notification);
+const Gobal_NotificationModel =  mongoose.model("Gobal_Notification", Gobal_Notification);
 
 module.exports = Gobal_NotificationModel;

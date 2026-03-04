@@ -15,6 +15,8 @@ const {
   verifySession,
 } = require("supertokens-node/recipe/session/framework/express");
 const userRouter = require("./server/Routers/userData-routes");
+const postRouter = require("./server/Routers/post-router");
+const s3BucketRouter = require("./server/Routers/s3-bucket-router");
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ limit: "1mb", extended: true }));
@@ -68,6 +70,10 @@ app.use(middleware());
 app.use(verifySession());
 
 app.use("/", userRouter);
+
+app.use("/", postRouter);
+
+app.use("/", s3BucketRouter);
 
 app.use(errorHandler());
 
